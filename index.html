@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -317,7 +317,7 @@
         <div class="grid2">
           <div class="field">
             <label for="f-district">District</label>
-            <select id="f-district" required></select>
+            <input type="text" id="f-district" placeholder="e.g. Musanze" required>
           </div>
           <div class="field">
             <label for="f-sector">Sector</label>
@@ -391,21 +391,6 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxm4MCUIunB_qOU
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/1rHDf8fbZe1QhhguBu1XhmU58MWckNKI_RBXtFjoOMDA/edit?gid=0#gid=0";
 const SITE_URL = "";
 const ADMIN_PASSCODE = "attendance2026";
-
-const DISTRICTS = [
-  "Bugesera","Gatsibo","Kayonza","Kirehe","Ngoma","Nyagatare","Rwamagana",
-  "Burera","Gakenke","Gicumbi","Musanze","Rulindo",
-  "Karongi","Ngororero","Nyabihu","Nyamasheke","Rubavu","Rusizi","Rutsiro",
-  "Gisagara","Huye","Kamonyi","Muhanga","Nyamagabe","Nyanza","Nyaruguru","Ruhango",
-  "Gasabo","Kicukiro","Nyarugenge"
-];
-
-function populateDistricts(){
-  const sel = document.getElementById('f-district');
-  sel.innerHTML = '<option value="">Select district</option>' +
-    DISTRICTS.map(d => `<option value="${d}">${d}</option>`).join('');
-}
-populateDistricts();
 
 const sigCanvas = document.getElementById('sig-canvas');
 const sigCtx = sigCanvas.getContext('2d');
@@ -529,7 +514,6 @@ document.getElementById('reg-form').addEventListener('submit', async function(e)
 
     msgBox.innerHTML = '<div class="msg ok">You\'re registered, ' + names + '. Thank you!</div>';
     document.getElementById('reg-form').reset();
-    populateDistricts();
     clearSignature();
   }catch(err){
     msgBox.innerHTML = '<div class="msg warn">Couldn\'t save your details: ' + escapeHtml(err.message || String(err)) + '</div>';
