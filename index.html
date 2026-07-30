@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>City of Kigali Youth Volunteers' General Assembly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --ink:#1C2438;
+    --ink-soft:#3A4560;
+    --paper:#F1ECE0;
+    --card:#FBF9F3;
+    --ochre:#D9A441;
+    --rust:#A13D2B;
+    --rust-dark:#7A2E20;
+    --pine:#2F5233;
+    --line:#DCD5C4;
+    --muted:#6B6455;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:radial-gradient(var(--line) 1px, transparent 1px);
+    background-size:22px 22px;
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px 60px;}
+  header.hero{
+    position:relative;
+    overflow:hidden;
+    background:var(--ink);
+    color:var(--paper);
+    padding:44px 20px 28px;
+    margin-bottom:0;
+  }
+  .hero-skyline{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    width:100%;
+    height:90px;
+    opacity:.35;
+  }
+  .hero-inner{max-width:760px;margin:0 auto;position:relative;z-index:1;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ochre);
+    margin:0 0 10px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:46px;
+    line-height:1.1;
+    margin:0 0 10px;
+  }
+  .hero p{
+    font-size:15px;
+    color:#D8D2C0;
+    margin:0;
+    max-width:520px;
+  }
+  @media(max-width:520px){
+    h1{font-size:32px;}
+  }
+  .zigzag{
+    height:14px;
+    width:100%;
+    display:flex;
+  }
+  .zigzag span{
+    flex:1;
+    background-image:
+      linear-gradient(135deg, rgba(255,255,255,.55) 25%, transparent 25%),
+      linear-gradient(225deg, rgba(255,255,255,.55) 25%, transparent 25%),
+      linear-gradient(315deg, rgba(255,255,255,.55) 25%, transparent 25%),
+      linear-gradient(45deg, rgba(255,255,255,.55) 25%, transparent 25%);
+    background-size:14px 14px;
+  }
+  .zigzag span:nth-child(1){background-color:var(--rust);}
+  .zigzag span:nth-child(2){background-color:var(--ochre);}
+  .zigzag span:nth-child(3){background-color:var(--pine);}
+  .tabs{
+    display:flex;
+    gap:6px;
+    margin:28px 0 22px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:5px;
+  }
+  .tab-btn{
+    flex:1;
+    padding:10px 12px;
+    border:none;
+    background:transparent;
+    border-radius:7px;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:600;
+    color:var(--muted);
+    cursor:pointer;
+    transition:background .15s ease, color .15s ease;
+  }
+  .tab-btn.active{background:linear-gradient(135deg, var(--ink) 60%, var(--rust-dark) 130%);color:var(--paper);}
+  .panel{display:none;}
+  .panel.active{display:block;}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-top:3px solid var(--line);
+    border-radius:14px;
+    padding:26px 24px;
+  }
+  label{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.03em;
+    color:var(--ink-soft);
+    margin:0 0 6px;
+  }
+  .field{margin-bottom:18px;}
+  input[type=text], input[type=tel], select{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:15px;
+    font-family:'Inter',sans-serif;
+    background:#fff;
+    color:var(--ink);
+  }
+  input:focus, select:focus{
+    outline:none;
+    border-color:var(--ochre);
+    box-shadow:0 0 0 3px rgba(217,164,65,.25);
+  }
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:520px){.grid2{grid-template-columns:1fr;}}
+  button.primary{
+    width:100%;
+    padding:13px;
+    background:var(--rust);
+    color:#FBF3EC;
+    border:none;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    font-family:'Inter',sans-serif;
+  }
+  button.primary:hover{background:var(--rust-dark);}
+  button.primary:disabled{opacity:.55;cursor:not-allowed;}
+  button.ghost{
+    padding:9px 14px;
+    background:transparent;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink-soft);
+    cursor:pointer;
+    font-family:'Inter',sans-serif;
+  }
+  button.ghost:hover{border-color:var(--ink-soft);}
+  .msg{
+    margin-top:16px;
+    padding:12px 14px;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:500;
+  }
+  .msg.ok{background:#E7EEE3;color:var(--pine);border:1px solid #C5D6BC;}
+  .msg.warn{background:#F6E9DF;color:var(--rust-dark);border:1px solid #E7C7B4;}
+  .admin-gate{max-width:340px;margin:0 auto;text-align:center;}
+  .admin-gate p{color:var(--muted);font-size:14px;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  @media(max-width:620px){.two-col{grid-template-columns:1fr;}}
+  .qr-frame{
+    background:#fff;
+    border:2px dashed var(--ochre);
+    border-radius:12px;
+    padding:18px;
+    text-align:center;
+  }
+  .link-row{
+    display:flex;
+    gap:8px;
+    margin-top:14px;
+  }
+  .link-row input{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);background:#fff;}
+  .card-rust{border-top-color:var(--rust);}
+  .card-ochre{border-top-color:var(--ochre);}
+  .card-pine{border-top-color:var(--pine);}
+  .stat{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:36px;
+    font-weight:500;
+    color:var(--pine);
+    margin:0;
+  }
+  .stat-label{
+    font-size:12px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    margin:0 0 4px;
+  }
+  table.preview{width:100%;border-collapse:collapse;margin-top:16px;font-size:13px;}
+  table.preview th{
+    text-align:left;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    color:var(--muted);
+    border-bottom:1px solid var(--line);
+    padding:6px 8px;
+  }
+  table.preview td{
+    padding:7px 8px;
+    border-bottom:1px solid var(--line);
+    color:var(--ink-soft);
+  }
+  .empty-note{color:var(--muted);font-size:13px;margin-top:14px;}
+  .section-title{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:19px;
+    margin:0 0 4px;
+  }
+  .section-sub{font-size:13px;color:var(--muted);margin:0 0 14px;}
+  .sig-frame{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+  }
+  .sig-frame canvas{
+    display:block;
+    width:100%;
+    height:140px;
+    touch-action:none;
+    cursor:crosshair;
+  }
+  .sig-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:8px;
+  }
+  .sig-hint{font-size:12px;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <svg class="hero-skyline" viewBox="0 0 760 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <rect x="10" y="40" width="26" height="50" fill="#D9A441"/>
+    <rect x="42" y="55" width="20" height="35" fill="#D9A441"/>
+    <rect x="70" y="30" width="24" height="60" fill="#D9A441"/>
+    <polygon points="118,28 150,28 160,90 108,90" fill="#D9A441"/>
+    <ellipse cx="134" cy="26" rx="17" ry="7" fill="#D9A441"/>
+    <rect x="176" y="48" width="22" height="42" fill="#D9A441"/>
+    <rect x="204" y="35" width="18" height="55" fill="#D9A441"/>
+    <rect x="600" y="42" width="20" height="48" fill="#D9A441"/>
+    <rect x="628" y="25" width="24" height="65" fill="#D9A441"/>
+    <rect x="660" y="50" width="18" height="40" fill="#D9A441"/>
+    <rect x="686" y="33" width="22" height="57" fill="#D9A441"/>
+    <rect x="716" y="46" width="20" height="44" fill="#D9A441"/>
+  </svg>
+  <div class="hero-inner">
+    <p class="eyebrow" style="font-size:15px;">City of Kigali</p>
+    <h1>Youth Volunteers'<br>General Assembly</h1>
+    <p>Scan the QR code or use the shared link, fill in your details once, then add your signature.</p>
+  </div>
+</header>
+<div class="zigzag"><span></span><span></span><span></span></div>
+
+<div class="wrap">
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-btn-register" onclick="switchTab('register')">Register</button>
+    <button class="tab-btn" id="tab-btn-admin" onclick="switchTab('admin')">Admin</button>
+  </div>
+
+  <!-- REGISTER PANEL -->
+  <div class="panel active" id="panel-register">
+    <div class="card card-rust">
+      <p class="section-title">Fill in your details</p>
+      <p class="section-sub">You only need to register once &mdash; your phone number is used as your unique ID.</p>
+
+      <form id="reg-form">
+        <div class="field">
+          <label for="f-names">Full names</label>
+          <input type="text" id="f-names" placeholder="e.g. Uwase Diane" required>
+        </div>
+        <div class="field">
+          <label for="f-phone">Phone number</label>
+          <input type="tel" id="f-phone" placeholder="07XXXXXXXX" required>
+        </div>
+        <div class="field">
+          <label for="f-role">Role / position</label>
+          <input type="text" id="f-role" placeholder="e.g. Sector Coordinator" required>
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label for="f-district">District</label>
+            <select id="f-district" required></select>
+          </div>
+          <div class="field">
+            <label for="f-sector">Sector</label>
+            <input type="text" id="f-sector" placeholder="e.g. Kicukiro" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="sig-canvas">Signature</label>
+          <div class="sig-frame">
+            <canvas id="sig-canvas"></canvas>
+          </div>
+          <div class="sig-row">
+            <span class="sig-hint">Use your finger or mouse to sign here.</span>
+            <button type="button" class="ghost" onclick="clearSignature()">Clear</button>
+          </div>
+        </div>
+        <button type="submit" class="primary" id="submit-btn">Confirm registration</button>
+      </form>
+      <div id="reg-msg"></div>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div class="panel" id="panel-admin">
+
+    <div class="card admin-gate card-pine" id="admin-gate">
+      <p class="section-title">Admin sign-in</p>
+      <p>Enter the passcode to view the QR code, link, attendance stats, and export to Excel.</p>
+      <div class="field" style="text-align:left;">
+        <label for="passcode">Passcode</label>
+        <input type="text" id="passcode" placeholder="Type here">
+      </div>
+      <button class="primary" onclick="checkPasscode()">Sign in</button>
+      <p id="pass-error" class="msg warn" style="display:none;">Incorrect passcode. Try again.</p>
+    </div>
+
+    <div id="admin-content" style="display:none;">
+      <div class="two-col">
+        <div class="card card-ochre">
+          <p class="section-title">QR code &amp; shared link</p>
+          <p class="section-sub">Share this with attendees &mdash; the QR code and link both open the same registration form.</p>
+          <div class="qr-frame"><canvas id="qrcode"></canvas></div>
+          <div class="link-row">
+            <input type="text" id="share-link" readonly>
+            <button class="ghost" onclick="copyLink()">Copy</button>
+          </div>
+        </div>
+        <div class="card card-pine">
+          <p class="section-title">Summary</p>
+          <p class="stat-label">Registered</p>
+          <p class="stat" id="count-stat">0</p>
+          <button class="primary" style="margin-top:18px;" onclick="exportExcel()">Export to Excel</button>
+          <button class="ghost" style="margin-top:10px;width:100%;" onclick="openSheet()">Open Google Sheet</button>
+          <button class="ghost" style="margin-top:10px;width:100%;" onclick="refreshAdmin()">Refresh</button>
+        </div>
+      </div>
+
+      <div class="card card-ochre" style="margin-top:20px;">
+        <p class="section-title">Recent registrations</p>
+        <div id="preview-wrap">
+          <p class="empty-note">No one has registered yet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxm4MCUIunB_qOUo0jBRMH-ksG-y2EjSfTzFoeINokyNLjEvF51cQnMazA0edpXycKA/exec";
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/1rHDf8fbZe1QhhguBu1XhmU58MWckNKI_RBXtFjoOMDA/edit?gid=0#gid=0";
+const SITE_URL = "";
+const ADMIN_PASSCODE = "attendance2026";
+
+const DISTRICTS = [
+  "Bugesera","Gatsibo","Kayonza","Kirehe","Ngoma","Nyagatare","Rwamagana",
+  "Burera","Gakenke","Gicumbi","Musanze","Rulindo",
+  "Karongi","Ngororero","Nyabihu","Nyamasheke","Rubavu","Rusizi","Rutsiro",
+  "Gisagara","Huye","Kamonyi","Muhanga","Nyamagabe","Nyanza","Nyaruguru","Ruhango",
+  "Gasabo","Kicukiro","Nyarugenge"
+];
+
+function populateDistricts(){
+  const sel = document.getElementById('f-district');
+  sel.innerHTML = '<option value="">Select district</option>' +
+    DISTRICTS.map(d => `<option value="${d}">${d}</option>`).join('');
+}
+populateDistricts();
+
+const sigCanvas = document.getElementById('sig-canvas');
+const sigCtx = sigCanvas.getContext('2d');
+let sigDrawing = false;
+let sigHasStroke = false;
+
+function resizeSigCanvas(){
+  const rect = sigCanvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  sigCanvas.width = rect.width * dpr;
+  sigCanvas.height = rect.height * dpr;
+  sigCtx.setTransform(1, 0, 0, 1, 0, 0);
+  sigCtx.scale(dpr, dpr);
+  sigCtx.strokeStyle = '#1C2438';
+  sigCtx.lineWidth = 2;
+  sigCtx.lineCap = 'round';
+}
+window.addEventListener('resize', resizeSigCanvas);
+setTimeout(resizeSigCanvas, 0);
+
+function sigPos(evt){
+  const rect = sigCanvas.getBoundingClientRect();
+  const point = evt.touches ? evt.touches[0] : evt;
+  return { x: point.clientX - rect.left, y: point.clientY - rect.top };
+}
+function sigStart(evt){
+  evt.preventDefault();
+  sigDrawing = true;
+  const p = sigPos(evt);
+  sigCtx.beginPath();
+  sigCtx.moveTo(p.x, p.y);
+}
+function sigMove(evt){
+  if(!sigDrawing) return;
+  evt.preventDefault();
+  const p = sigPos(evt);
+  sigCtx.lineTo(p.x, p.y);
+  sigCtx.stroke();
+  sigHasStroke = true;
+}
+function sigEnd(){ sigDrawing = false; }
+
+sigCanvas.addEventListener('mousedown', sigStart);
+sigCanvas.addEventListener('mousemove', sigMove);
+window.addEventListener('mouseup', sigEnd);
+sigCanvas.addEventListener('touchstart', sigStart);
+sigCanvas.addEventListener('touchmove', sigMove);
+sigCanvas.addEventListener('touchend', sigEnd);
+
+function clearSignature(){
+  sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+  sigHasStroke = false;
+}
+
+function switchTab(name){
+  document.getElementById('panel-register').classList.toggle('active', name==='register');
+  document.getElementById('panel-admin').classList.toggle('active', name==='admin');
+  document.getElementById('tab-btn-register').classList.toggle('active', name==='register');
+  document.getElementById('tab-btn-admin').classList.toggle('active', name==='admin');
+  if(name==='admin' && document.getElementById('admin-content').style.display !== 'none'){
+    refreshAdmin();
+  }
+}
+
+function normalizePhone(v){
+  return v.replace(/\s|-/g,'');
+}
+
+document.getElementById('reg-form').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const btn = document.getElementById('submit-btn');
+  const msgBox = document.getElementById('reg-msg');
+  msgBox.innerHTML = '';
+
+  const names = document.getElementById('f-names').value.trim();
+  const phone = normalizePhone(document.getElementById('f-phone').value.trim());
+  const role = document.getElementById('f-role').value.trim();
+  const district = document.getElementById('f-district').value;
+  const sector = document.getElementById('f-sector').value.trim();
+
+  if(!/^\d{9,10}$/.test(phone)){
+    msgBox.innerHTML = '<div class="msg warn">That phone number isn\'t valid. Enter 9-10 digits only.</div>';
+    return;
+  }
+  if(!sigHasStroke){
+    msgBox.innerHTML = '<div class="msg warn">Please add your signature before confirming.</div>';
+    return;
+  }
+
+  if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf('PASTE_YOUR') === 0){
+    msgBox.innerHTML = '<div class="msg warn">This form is not set up yet. The organizer needs to add the Google Apps Script URL in the code.</div>';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  try{
+    const signatureData = sigCanvas.toDataURL('image/png');
+    const payload = {
+      names: names,
+      phone: phone,
+      role: role,
+      district: district,
+      sector: sector,
+      signature: signatureData
+    };
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json();
+
+    if(result.status === 'duplicate'){
+      msgBox.innerHTML = '<div class="msg warn">This person (' + phone + ') has already registered.</div>';
+      return;
+    }
+    if(result.status !== 'ok'){
+      throw new Error(result.message || 'Unexpected response from the server.');
+    }
+
+    msgBox.innerHTML = '<div class="msg ok">You\'re registered, ' + names + '. Thank you!</div>';
+    document.getElementById('reg-form').reset();
+    populateDistricts();
+    clearSignature();
+  }catch(err){
+    msgBox.innerHTML = '<div class="msg warn">Couldn\'t save your details: ' + escapeHtml(err.message || String(err)) + '</div>';
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'Confirm registration';
+  }
+});
+
+function checkPasscode(){
+  const val = document.getElementById('passcode').value;
+  const err = document.getElementById('pass-error');
+  if(val === ADMIN_PASSCODE){
+    err.style.display = 'none';
+    document.getElementById('admin-gate').style.display = 'none';
+    document.getElementById('admin-content').style.display = 'block';
+    setupQR();
+    refreshAdmin();
+  }else{
+    err.style.display = 'block';
+  }
+}
+
+function setupQR(){
+  const link = SITE_URL || window.location.href;
+  document.getElementById('share-link').value = link;
+  const qrEl = document.getElementById('qrcode');
+  QRCode.toCanvas(qrEl, link, {
+    width: 180,
+    margin: 2,
+    color: {
+      dark: "#1C2438",
+      light: "#ffffff"
+    }
+  }, function(err){
+    if(err){
+      qrEl.parentElement.innerHTML = '<p class="empty-note">Could not generate the QR code.</p>';
+    }
+  });
+}
+
+function copyLink(){
+  const input = document.getElementById('share-link');
+  input.select();
+  navigator.clipboard.writeText(input.value).catch(function(){});
+}
+
+async function loadAllRegistrations(){
+  if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf('PASTE_YOUR') === 0){
+    return [];
+  }
+  try{
+    const res = await fetch(APPS_SCRIPT_URL + '?t=' + Date.now());
+    const result = await res.json();
+    if(result.status !== 'ok'){
+      return [];
+    }
+    const rows = result.rows || [];
+    rows.sort(function(a,b){ return new Date(b.timestamp) - new Date(a.timestamp); });
+    return rows.map(function(r){
+      return {
+        names: r.names,
+        phone: r.phone,
+        role: r.role,
+        district: r.district,
+        sector: r.sector,
+        signature: r.signed === 'Yes',
+        timestamp: r.timestamp
+      };
+    });
+  }catch(err){
+    return [];
+  }
+}
+
+async function refreshAdmin(){
+  const rows = await loadAllRegistrations();
+  document.getElementById('count-stat').textContent = rows.length;
+
+  const wrap = document.getElementById('preview-wrap');
+  if(rows.length === 0){
+    wrap.innerHTML = '<p class="empty-note">No one has registered yet.</p>';
+    return;
+  }
+  const recent = rows.slice(0, 8);
+  let html = '<table class="preview"><thead><tr><th>Name</th><th>Phone</th><th>Role</th><th>District</th><th>Sector</th><th>Signature</th></tr></thead><tbody>';
+  recent.forEach(function(r){
+    const sigMark = r.signature ? '&#10003;' : '&mdash;';
+    html += '<tr><td>' + escapeHtml(r.names) + '</td><td>' + escapeHtml(r.phone) + '</td><td>' + escapeHtml(r.role) + '</td><td>' + escapeHtml(r.district) + '</td><td>' + escapeHtml(r.sector) + '</td><td>' + sigMark + '</td></tr>';
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+function openSheet(){
+  if(!SHEET_URL || SHEET_URL.indexOf('PASTE_YOUR') === 0){
+    alert('The organizer has not linked the Google Sheet yet.');
+    return;
+  }
+  window.open(SHEET_URL, '_blank');
+}
+
+function escapeHtml(str){
+  if(!str) return '';
+  return String(str).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+async function exportExcel(){
+  const rows = await loadAllRegistrations();
+  if(rows.length === 0){
+    alert('No data to export yet.');
+    return;
+  }
+  const dataForSheet = rows.map(function(r){
+    return {
+      'Names': r.names,
+      'Phone': r.phone,
+      'Role': r.role,
+      'District': r.district,
+      'Sector': r.sector,
+      'Signed': r.signature ? 'Yes' : 'No',
+      'Registered at': new Date(r.timestamp).toLocaleString()
+    };
+  });
+  const ws = XLSX.utils.json_to_sheet(dataForSheet);
+  ws['!cols'] = [{wch:24},{wch:16},{wch:22},{wch:16},{wch:16},{wch:10},{wch:22}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Attendance');
+  const dateStr = new Date().toISOString().slice(0,10);
+  XLSX.writeFile(wb, 'attendance-' + dateStr + '.xlsx');
+}
+</script>
+
+</body>
+</html>
